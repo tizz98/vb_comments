@@ -1,0 +1,31 @@
+#output {
+    height: 600px;
+    width: 700px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+#purpose {
+    height: 300px;
+    width: 400px;
+}
+#header-input, #global-var-container, #local-var-container,
+#parameter-container, #return-container {
+    display: none;
+}
+
+#header-data {
+    width: 500px;
+}
+
+input.global.desc {
+    width: 600px;
+}
+
+table td {
+    padding: 4px;
+    border: 1px solid black;
+}
+
+table td:nth-child(1) {
+    font-weight: bold;
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Visual Basic Comments</title>
+    <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" type="text/css" rel="stylesheet">
+    <link href="css/style.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript">
+        window.VbComment = {};
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h4>What is your name?</h4>
+        <input type="text" id="name"><br>
+        <hr>
+        <h4>What assignment is this for?</h4>
+        <input type="text" id="assignment">
+        <hr>
+        <h4>What is this comment for?</h4>
+        <input type="radio" name="ctype" value="file"> File<br>
+        <input type="radio" name="ctype" value="main"> Main File<br>
+        <input type="radio" name="ctype" value="sub"> Subprogram<br>
+        <input type="radio" name="ctype" value="func"> Function<br>
+        <hr>
+        <h4><span class="obj-name-txt"></span> name?</h4>
+        <input type="text" id="obj-name">
+        <hr>
+        <h4>Purpose</h4>
+        <textarea id="purpose"></textarea>
+        <hr>
+        <div id="header-input">
+            <h4><span class="obj-name-txt"></span> Header</h4>
+            <p>
+                ex:
+                <pre id="sub-desc">Sub doStuff(thing1 As String, thing2 As Integer)</pre>
+                <pre id="func-desc">Function returnStuff(input1 As String, input2 As Integer) As String</pre>
+            </p>
+            <input type="text" id="header-data">
+            <hr>
+        </div>
+        <div id="global-var-container">
+            <!--Only for main-->
+            <h4>Globals <small>(automatically sorted)</small></h4>
+            <table id="globals"></table><br>
+            <button class="btn btn-primary-outline" id="add-global"><i class="fa fa-fw fa-plus"></i> Add new global variable</button>
+            <hr>
+        </div>
+        <div id="local-var-container">
+            <!--Only for sub/function-->
+            Local
+            <hr>
+        </div>
+        <div id="parameter-container">
+            <!--Only for sub/function-->
+            Parameter
+            <hr>
+        </div>
+        <div id="return-container">
+            <!--Only for function-->
+            Return
+            <hr>
+        </div>
+    </div>
+
+    <br>
+    <div class="container">
+        <h4>Comment Output</h4>
+        <textarea id="output" readonly onclick="this.focus(); this.select();"></textarea>
+    </div>
+
+    <script src="js/jquery-2.2.0.min.js" type="text/javascript"></script>
+    <script src="js/tether.min.js" type="text/javascript"></script>
+    <script src="js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="js/moment.min.js" type="text/javascript"></script>
+    <script src="js/underscore-min.js" type="text/javascript"></script>
+    <script src="js/main.js" type="text/javascript"></script>
+</body>
+</html>
