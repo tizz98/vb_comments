@@ -42,6 +42,18 @@
             <input type="text" id="header-data">
             <hr>
         </div>
+        <div id="parameter-container">
+            <!--Only for sub/function-->
+            <h4>Parameters</h4>
+            <table id="parameters"></table>
+            <hr>
+        </div>
+        <div id="return-container">
+            <!--Only for function-->
+            <h4>Return Value Description</h4>
+            <input id="return" type="text">
+            <hr>
+        </div>
         <div id="global-var-container">
             <!--Only for main-->
             <h4>Globals <small>(automatically sorted)</small></h4>
@@ -54,16 +66,6 @@
             <h4>Locals <small>(automatically sorted)</small></h4>
             <table id="locals"></table><br>
             <button class="btn btn-primary-outline" id="add-local"><i class="fa fa-fw fa-plus"></i> Add new local variable</button>
-            <hr>
-        </div>
-        <div id="parameter-container">
-            <!--Only for sub/function-->
-            Parameter
-            <hr>
-        </div>
-        <div id="return-container">
-            <!--Only for function-->
-            Return
             <hr>
         </div>
     </div>

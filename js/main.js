@@ -91,6 +91,11 @@
                 if (!firstWord && (tempLine.length + textToAdd.length) > maxLength) {
                     returnText += C.utils.getCommentLine(tempLine, paddingFunction);
                     tempLine = "";
+
+                    if (indentSuccessiveLines && !firstLine) {
+                        tempLine += Array(indentLen + 1).join(" ");
+                    }
+                    tempLine += word;
                 } else if (firstWord) {
                     if (indentSuccessiveLines && !firstLine) {
                         tempLine += Array(indentLen + 1).join(" ");
@@ -294,6 +299,14 @@
             return self.name + " " + C.const.DICTIONARY_DIVIDER + " " + self.description;
         };
 
+        self.addDescriptionListener = function() {
+            var $input = $($("#" + self.id).find("input")[0]);
+            $input.keyup(function () {
+                self.description = $input.val();
+                C.utils.updateOutput(comment);
+            });
+        };
+
         self.addDeleteListener = function() {
             $($("#" + self.id).find("button")[0]).on("click", function() {
                 comment[self.varr_arr] = comment[self.varr_arr].filter(function (obj) {
@@ -337,6 +350,7 @@
         jQuery event handlers
      */
     $("input[type=radio][name=ctype]").change(function(){
+        // todo : reset all tables when changing so no data is left behind...
         var value = this.value,
             $objNameSpan = $(".obj-name-txt"),
             $headerInput = $("#header-input"),
@@ -405,14 +419,42 @@
     $("#header-data").keyup(function() {
         try{
             var parseFunc = comment.commentType === "sub" ? C.utils.parseSubHeader : C.utils.parseFuncHeader,
-                headerDict = parseFunc($("#header-data").val());
+                headerDict = parseFunc($("#header-data").val()),
+                table = document.getElementById("parameters"),
+                row,
+                nameCol,
+                descCol,
+                parameter;
+            $(table).find("tr").remove();
             comment.parameters = headerDict.parameters;
             comment.returns = new C.classes.ReturnType(headerDict.type);
             $("#header-data").css("color", "black");
-            C.utils.updateOutput(comment);
+
+            for (var i = 0; i < comment.parameters.length; ++i) {
+                parameter = comment.parameters[i];
+                parameter.id = C.utils.randomString(16);
+
+                row = table.insertRow(-1);
+                nameCol = row.insertCell(0);
+                descCol = row.insertCell(1);
+
+                $(row).attr("id", parameter.id);
+
+                nameCol.innerHTML = parameter.name;
+                descCol.outerHTML = "<input type='text' class='parameter-desc'>";
+                parameter.addDescriptionListener();
+            }
+
+            $("#parameter-container").show();
+            $("#return-container").show();
         } catch (e) {
-            console.log(e);
+            comment.parameters = [];
+
             $("#header-data").css("color", "red");
+            $("#parameter-container").hide();
+            $("#return-container").hide();
+        } finally {
+            C.utils.updateOutput(comment);
         }
     });
 
@@ -461,6 +503,11 @@
         $(row).attr("id", localId);
         local.addDeleteListener();
 
+        C.utils.updateOutput(comment);
+    });
+
+    $("#return").keyup(function () {
+        comment.returns.description = $("#return").val();
         C.utils.updateOutput(comment);
     });
 
