@@ -253,16 +253,27 @@
 
                 if (self.parameters.length > 0) {
                     for (var i = 0; i < self.parameters.length; ++i) {
-                        commentString += C.utils.splitText(self.parameters[i].getString());
+                        commentString += C.utils.splitText(self.parameters[i].getString(), C.utils.padRight, true, (self.parameters[i].name + " - ").length);
                     }
                 } else {
                     commentString += C.utils.splitText(C.const.EMPTY_DICT_STRING);
                 }
-
                 commentString += C.const.DIVIDER_LINE;
+
+                commentString += C.utils.splitText("Local Variable Dictionary (alphabetically):");
+                var locals = self.getSortedLocals();
+                if (locals.length > 0) {
+                    for (var i = 0; i < locals.length; ++i) {
+                        commentString += C.utils.splitText(locals[i].getString(), C.utils.padRight, true, (locals[i].name + " - ").length);
+                    }
+                } else {
+                    commentString += C.utils.splitText(C.const.EMPTY_DICT_STRING);
+                }
+                commentString += C.const.DIVIDER_LINE;
+
                 if (self.commentType === "func") {
                     commentString += C.utils.splitText("Returns:");
-                    commentString += C.utils.splitText(self.returns.getString());
+                    commentString += C.utils.splitText(self.returns.getString(), C.utils.padRight, true, (self.returns.dataType + " - ").length);
                     commentString += C.const.DIVIDER_LINE;
                 }
             }
@@ -271,12 +282,13 @@
         };
     };
 
-    C.classes.Variable = function(name, description, id) {
+    C.classes.Variable = function(name, description, id, var_arr) {
         var self = this;
 
         self.name = name || "";
         self.description = description || "";
         self.id = id || "";  // table row id
+        self.varr_arr = var_arr || "";
 
         self.getString = function() {
             return self.name + " " + C.const.DICTIONARY_DIVIDER + " " + self.description;
@@ -284,7 +296,7 @@
 
         self.addDeleteListener = function() {
             $($("#" + self.id).find("button")[0]).on("click", function() {
-                comment.global_vars = comment.global_vars.filter(function (obj) {
+                comment[self.varr_arr] = comment[self.varr_arr].filter(function (obj) {
                     return obj.id !== self.id;
                 });
 
@@ -408,7 +420,7 @@
         var globalName = prompt("What is the name of the global variable?"),
             globalDesc = prompt("Please describe the global variable:"),
             globalId = C.utils.randomString(16),
-            global = new C.classes.Variable(globalName, globalDesc, globalId),
+            global = new C.classes.Variable(globalName, globalDesc, globalId, "global_vars"),
             table = document.getElementById("globals"),
             row = table.insertRow(-1),
             nameCol = row.insertCell(0),
@@ -424,6 +436,30 @@
 
         $(row).attr("id", globalId);
         global.addDeleteListener();
+
+        C.utils.updateOutput(comment);
+    });
+
+    $("#add-local").on("click", function() {
+        var localName = prompt("What is the name of the local variable?"),
+            localDesc = prompt("Please describe the local variable:"),
+            localId = C.utils.randomString(16),
+            local = new C.classes.Variable(localName, localDesc, localId, "local_vars"),
+            table = document.getElementById("locals"),
+            row = table.insertRow(-1),
+            nameCol = row.insertCell(0),
+            descCol = row.insertCell(1),
+            deleteBtnCol = row.insertCell(2);
+
+        comment.local_vars.push(local);
+
+        nameCol.innerHTML = local.name;
+        descCol.innerHTML = local.description;
+
+        deleteBtnCol.outerHTML = "<button class='btn btn-danger-outline'><i class='fa fa-trash-o'></i></button>";
+
+        $(row).attr("id", localId);
+        local.addDeleteListener();
 
         C.utils.updateOutput(comment);
     });
