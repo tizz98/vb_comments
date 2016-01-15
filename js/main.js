@@ -350,7 +350,6 @@
         jQuery event handlers
      */
     $("input[type=radio][name=ctype]").change(function(){
-        // todo : reset all tables when changing so no data is left behind...
         var value = this.value,
             $objNameSpan = $(".obj-name-txt"),
             $headerInput = $("#header-input"),
@@ -394,6 +393,13 @@
             $parameterContainer.hide();
             $localContainer.hide();
         }
+
+        // reset tables & other data
+        $("#parameters").find("td").remove();
+        $("#globals").find("td").remove();
+        $("#locals").find("td").remove();
+        $("#header-data").val("");
+        $("#return").val("");
     });
 
     $("#name").keyup(function() {
