@@ -163,6 +163,10 @@
         return result;
     };
 
+    C.utils.updateUrl = function(name, assignment) {
+
+    };
+
     /*
         Comment Classes
      */
@@ -173,6 +177,7 @@
         self.name = "";
         self.writtenOn = moment().format("MM/DD/YYYY");
         self.objectName = "";
+        self._assignment = "";
         self.assignment = "";
         self.commentType = "";
         self.purpose = "";
@@ -219,6 +224,7 @@
         };
 
         self.setAssignment = function(val) {
+            self._assignment = val;
             if ($.isNumeric(val)) {
                 self.assignment = "Assign" + val;
             } else {
@@ -298,6 +304,10 @@
             }
 
             return commentString;
+        };
+
+        self.getUrlKwargs = function() {
+            return "?name=" + self.name + "&assignment=" + self._assignment;
         };
     };
 
@@ -424,6 +434,10 @@
     $("#name").keyup(function() {
         comment.name = $("#name").val();
         C.utils.updateOutput(comment);
+        if (history.pushState) {
+            var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + comment.getUrlKwargs();
+            history.pushState({path: newUrl}, '', newUrl)
+        }
     });
 
     $("#assignment").keyup(function() {
