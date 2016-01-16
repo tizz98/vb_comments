@@ -136,10 +136,13 @@
 
     C.utils.parseHeader = function(header, headerType) {
         var getReturnType = headerType === C.const.FUNC_HEADER,
-            parameterString = header.split("(")[1].split(")")[0],
+            initialHeaderSplit = header.split("("),
+            parameterString = initialHeaderSplit[1].split(")")[0],
+            headerName = initialHeaderSplit[0].split(" ")[1],
             returnType = getReturnType ? header.split(" As ").pop() : null,
             parameters = C.utils.parseParameters(parameterString);
         return {
+            name: headerName,
             type: returnType,
             parameters: parameters
         };
@@ -177,6 +180,17 @@
         self.local_vars = [];
         self.returns = new C.classes.ReturnType();
         self.parameters = [];
+
+        self.reinitialize = function() {
+            self.writtenOn = moment().format("MM/DD/YYYY");
+            self.objectName = "";
+            self.commentType = "";
+            self.purpose = "";
+            self.global_vars = [];
+            self.local_vars = [];
+            self.returns = new C.classes.ReturnType();
+            self.parameters = [];
+        };
 
         self.getSortedGlobals = function() {
             return _.sortBy(self.global_vars, function(obj) {
@@ -221,8 +235,8 @@
 
             // Top part (different per type)
             if (self.commentType === "file" || self.commentType == "main") {
-                commentString += C.utils.splitText("File Name : " + self.objectName, C.utils.padCenter);
-                commentString += C.utils.splitText("Part of Project : " + self.assignment, C.utils.padCenter);
+                commentString += C.utils.splitText("File Name: " + self.objectName, C.utils.padCenter);
+                commentString += C.utils.splitText("Part of Project: " + self.assignment, C.utils.padCenter);
                 commentString += C.const.DIVIDER_LINE;
             } else if (self.commentType === "sub" || self.commentType === "func") {
                 var objStr = self.getObjStr();
@@ -358,9 +372,10 @@
             $parameterContainer = $("#parameter-container"),
             $returnContainer = $("#return-container"),
             $subDesc = $("#sub-desc"),
-            $funcDesc = $("#func-desc");
+            $funcDesc = $("#func-desc"),
+            $objData = $("#obj-data");
+        comment.reinitialize();
         comment.commentType = value;
-        C.utils.updateOutput(comment);
 
         if (value === "file" || value === "main") {
             $objNameSpan.html("File");
@@ -373,14 +388,12 @@
                 $globalContainer.show();
             }
         } else if (value === "sub") {
-            $objNameSpan.html("Subprogram");
             $headerInput.show();
             $globalContainer.hide();
             $returnContainer.hide();
             $subDesc.show();
             $funcDesc.hide();
         } else if (value === "func") {
-            $objNameSpan.html("Function");
             $headerInput.show();
             $globalContainer.hide();
             $subDesc.hide();
@@ -388,18 +401,24 @@
         }
 
         if (value === "sub" || value === "func") {
+            $objData.hide();
             $localContainer.show();
         } else {
+            $objData.show();
             $parameterContainer.hide();
             $localContainer.hide();
         }
 
         // reset tables & other data
-        $("#parameters").find("td").remove();
-        $("#globals").find("td").remove();
-        $("#locals").find("td").remove();
+        $("#parameters").find("tr").remove();
+        $("#globals").find("tr").remove();
+        $("#locals").find("tr").remove();
         $("#header-data").val("");
         $("#return").val("");
+        $("#purpose").val("");
+        $("#obj-name").val("");
+
+        C.utils.updateOutput(comment);
     });
 
     $("#name").keyup(function() {
@@ -434,6 +453,7 @@
             $(table).find("tr").remove();
             comment.parameters = headerDict.parameters;
             comment.returns = new C.classes.ReturnType(headerDict.type);
+            comment.objectName = headerDict.name;
             $("#header-data").css("color", "black");
 
             for (var i = 0; i < comment.parameters.length; ++i) {
@@ -452,7 +472,9 @@
             }
 
             $("#parameter-container").show();
-            $("#return-container").show();
+
+            if (comment.commentType === "func")
+                $("#return-container").show();
         } catch (e) {
             comment.parameters = [];
 

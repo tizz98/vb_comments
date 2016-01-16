@@ -13,12 +13,8 @@
     display: none;
 }
 
-#header-data {
-    width: 500px;
-}
-
-input.global.desc {
-    width: 600px;
+#return, #header-data {
+    width: 800px;
 }
 
 table td {
