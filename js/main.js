@@ -443,6 +443,10 @@
     $("#assignment").keyup(function() {
         comment.setAssignment($("#assignment").val());
         C.utils.updateOutput(comment);
+        if (history.pushState) {
+            var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + comment.getUrlKwargs();
+            history.pushState({path: newUrl}, '', newUrl)
+        }
     });
 
     $("#obj-name").keyup(function() {
