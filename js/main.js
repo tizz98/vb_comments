@@ -181,6 +181,7 @@
         self.assignment = "";
         self.commentType = "";
         self.purpose = "";
+        self.program_purpose = "";
         self.global_vars = [];
         self.local_vars = [];
         self.returns = new C.classes.ReturnType();
@@ -195,6 +196,7 @@
             self.local_vars = [];
             self.returns = new C.classes.ReturnType();
             self.parameters = [];
+            self.program_purpose = "";
         };
 
         self.getSortedGlobals = function() {
@@ -236,6 +238,10 @@
             self.purpose = val.replace(/(\r\n|\n|\r)/gm, " ");
         };
 
+        self.setProgramPurpose = function(val) {
+            self.program_purpose = val.replace(/(\r\n|\n|\r)/gm, " ");
+        };
+
         self.getString = function() {
             var commentString = C.const.DIVIDER_LINE;
 
@@ -261,6 +267,11 @@
             commentString += C.const.DIVIDER_LINE;
 
             if (self.commentType === "main") {
+                commentString += C.utils.splitText("Program Purpose:");
+                commentString += C.utils.splitText("");
+                commentString += C.utils.splitText(self.program_purpose);
+                commentString += C.const.DIVIDER_LINE;
+
                 var globals = self.getSortedGlobals();
                 commentString += C.utils.splitText("Global Variable Dictionary (alphabetically):");
 
@@ -383,7 +394,10 @@
             $returnContainer = $("#return-container"),
             $subDesc = $("#sub-desc"),
             $funcDesc = $("#func-desc"),
-            $objData = $("#obj-data");
+            $objData = $("#obj-data"),
+            $programPurposeContainer = $("#program-purpose-container"),
+            $programPurpose = $("#program-purpose"),
+            $extraPurposeTxt = $("#extra-purpose-txt");
         comment.reinitialize();
         comment.commentType = value;
 
@@ -394,16 +408,22 @@
 
             if (value == "file") {
                 $globalContainer.hide();
+                $programPurposeContainer.hide();
+                $extraPurposeTxt.html("");
             } else {
+                $programPurposeContainer.show();
                 $globalContainer.show();
+                $extraPurposeTxt.html("File ");
             }
         } else if (value === "sub") {
+            $objNameSpan.html("Subprogram");
             $headerInput.show();
             $globalContainer.hide();
             $returnContainer.hide();
             $subDesc.show();
             $funcDesc.hide();
         } else if (value === "func") {
+            $objNameSpan.html("Function");
             $headerInput.show();
             $globalContainer.hide();
             $subDesc.hide();
@@ -413,6 +433,8 @@
         if (value === "sub" || value === "func") {
             $objData.hide();
             $localContainer.show();
+            $programPurposeContainer.hide();
+            $extraPurposeTxt.html("");
         } else {
             $objData.show();
             $parameterContainer.hide();
@@ -427,6 +449,7 @@
         $("#return").val("");
         $("#purpose").val("");
         $("#obj-name").val("");
+        $programPurpose.val("");
 
         C.utils.updateOutput(comment);
     });
@@ -554,6 +577,11 @@
 
     $("#return").keyup(function () {
         comment.returns.description = $("#return").val();
+        C.utils.updateOutput(comment);
+    });
+
+    $("#program-purpose").keyup(function () {
+        comment.setProgramPurpose($("#program-purpose").val());
         C.utils.updateOutput(comment);
     });
 

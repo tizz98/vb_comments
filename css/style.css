@@ -4,7 +4,7 @@
     font-family: "Courier New", Courier, monospace;
 }
 
-#purpose {
+#purpose, #program-purpose {
     height: 300px;
     width: 400px;
 }
@@ -24,4 +24,8 @@ table td {
 
 table td:nth-child(1) {
     font-weight: bold;
+}
+
+#program-purpose-container {
+    display: none;
 }
