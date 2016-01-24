@@ -120,8 +120,20 @@
         $("#output").val(comment.getString());
     };
 
+    C.utils.removeElementFromArray = function(array) {
+        var what, a = arguments, L = a.length, ax;
+        while (L > 1 && array.length) {
+            what = a[--L];
+            while((ax = array.indexOf(what)) !== -1) {
+                array.splice(ax, 1);
+            }
+        }
+
+        return array;
+    };
+
     C.utils.parseParameters = function(parameterString) {
-        var paramStrings = parameterString.split(", "),
+        var paramStrings = C.utils.removeElementFromArray(parameterString.split(", "), ""),
             params_to_return = [];
 
         for (var i = 0; i < paramStrings.length; ++i) {
