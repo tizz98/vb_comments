@@ -175,10 +175,6 @@
         return result;
     };
 
-    C.utils.updateUrl = function(name, assignment) {
-
-    };
-
     /*
         Comment Classes
      */
@@ -332,6 +328,13 @@
         self.getUrlKwargs = function() {
             return "?name=" + self.name + "&assignment=" + self._assignment;
         };
+
+        self.updateUrl = function() {
+            if (history.pushState) {
+                var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + self.getUrlKwargs();
+                history.pushState({path: newUrl}, '', newUrl);
+            }
+        };
     };
 
     C.classes.Variable = function(name, description, id, var_arr) {
@@ -469,19 +472,13 @@
     $("#name").keyup(function() {
         comment.name = $("#name").val();
         C.utils.updateOutput(comment);
-        if (history.pushState) {
-            var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + comment.getUrlKwargs();
-            history.pushState({path: newUrl}, '', newUrl)
-        }
+        comment.updateUrl();
     });
 
     $("#assignment").keyup(function() {
         comment.setAssignment($("#assignment").val());
         C.utils.updateOutput(comment);
-        if (history.pushState) {
-            var newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + comment.getUrlKwargs();
-            history.pushState({path: newUrl}, '', newUrl)
-        }
+        comment.updateUrl();
     });
 
     $("#obj-name").keyup(function() {
